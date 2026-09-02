@@ -26,7 +26,19 @@ const app = express();
 
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "*",
+    origin: function (origin, callback) {
+      const allowedOrigin = process.env.FRONTEND_URL;
+      if (!origin || !allowedOrigin) return callback(null, true);
+      
+      // Remove trailing slash for comparison
+      const cleanAllowedOrigin = allowedOrigin.replace(/\/$/, "");
+      if (origin === cleanAllowedOrigin) {
+        callback(null, true);
+      } else {
+        // fallback to allowing it or just returning the allowed origin
+        callback(null, cleanAllowedOrigin);
+      }
+    },
     credentials: true,
   })
 );
