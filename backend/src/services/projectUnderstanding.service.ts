@@ -1,0 +1,169 @@
+import { pool } from "../config/database";
+
+export const getProjectUnderstanding = async (
+  owner: string,
+  repo: string
+) => {
+  const fullName = `${owner}/${repo}`;
+
+  const repositoryResult = await pool.query(
+    `
+    SELECT
+      id,
+      name,
+      full_name,
+      description,
+      language,
+      stars,
+      forks
+    FROM repositories
+    WHERE full_name = $1
+    LIMIT 1;
+    `,
+    [fullName]
+  );
+
+  const repository = repositoryResult.rows[0];
+
+  if (!repository) {
+    throw new Error(
+      "Repository not found in database"
+    );
+  }
+
+  const repositoryId = repository.id;
+
+  const commitsResult = await pool.query(
+    `
+    SELECT
+      message,
+      author,
+      commit_date
+    FROM commits
+    WHERE repository_id = $1::UUID
+    ORDER BY commit_date DESC NULLS LAST
+    LIMIT 10;
+    `,
+    [repositoryId]
+  );
+
+  const issuesResult = await pool.query(
+    `
+    SELECT
+      issue_number,
+      title,
+      state
+    FROM issues
+    WHERE repository_id = $1::UUID
+    ORDER BY issue_number DESC;
+    `,
+    [repositoryId]
+  );
+
+  const pullRequestsResult = await pool.query(
+    `
+    SELECT
+      pr_number,
+      title,
+      state
+    FROM pull_requests
+    WHERE repository_id = $1::UUID
+    ORDER BY pr_number DESC;
+    `,
+    [repositoryId]
+  );
+
+  const documentsResult = await pool.query(
+    `
+    SELECT
+      name,
+      content
+    FROM documents
+    WHERE repository_id = $1::UUID
+    ORDER BY path;
+    `,
+    [repositoryId]
+  );
+
+  const readmeContent =
+    documentsResult.rows[0]?.content ?? "";
+
+  const commitMessages = commitsResult.rows
+    .map((commit) => commit.message)
+    .join(" ");
+
+  const understanding = {
+    projectName: repository.name,
+
+    repository: repository.full_name,
+
+    purpose:
+      repository.description ??
+      "Project purpose is not described in repository metadata.",
+
+    technology:
+      repository.language ?? "Technology not identified.",
+
+    features: extractFeatures(readmeContent),
+
+    developmentHistory: commitsResult.rows.map(
+      (commit) => ({
+        message: commit.message,
+        author: commit.author,
+        date: commit.commit_date,
+      })
+    ),
+
+    issueSummary: {
+      total: issuesResult.rows.length,
+      open: issuesResult.rows.filter(
+        (issue) => issue.state === "open"
+      ).length,
+      closed: issuesResult.rows.filter(
+        (issue) => issue.state === "closed"
+      ).length,
+    },
+
+    pullRequestSummary: {
+      total: pullRequestsResult.rows.length,
+      open: pullRequestsResult.rows.filter(
+        (pullRequest) =>
+          pullRequest.state === "open"
+      ).length,
+      closed: pullRequestsResult.rows.filter(
+        (pullRequest) =>
+          pullRequest.state === "closed"
+      ).length,
+    },
+
+    recentActivity:
+      commitMessages || "No commit activity found.",
+
+    readmeAvailable: Boolean(readmeContent),
+  };
+
+  return understanding;
+};
+
+const extractFeatures = (readme: string) => {
+  if (!readme) {
+    return [];
+  }
+
+  const lines = readme
+    .split("\n")
+    .map((line) => line.trim());
+
+  return lines
+    .filter(
+      (line) =>
+        line.startsWith("-") ||
+        line.startsWith("*")
+    )
+    .map((line) =>
+      line
+        .replace(/^[-*]\s*/, "")
+        .trim()
+    )
+    .slice(0, 15);
+};
