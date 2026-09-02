@@ -1,5 +1,40 @@
 import { pool } from "../config/database";
 
+interface DocumentRow {
+  name: string;
+  path: string;
+  content: string | null;
+}
+
+interface CommitRow {
+  message: string;
+  author: string | null;
+  commit_date: Date | string | null;
+  url?: string | null;
+}
+
+interface IssueRow {
+  issue_number: number;
+  title: string;
+  body?: string | null;
+  state: string;
+  author: string | null;
+  created_at_github?: Date | string | null;
+  updated_at_github?: Date | string | null;
+  url?: string | null;
+}
+
+interface PullRequestRow {
+  pr_number: number;
+  title: string;
+  body?: string | null;
+  state: string;
+  author: string | null;
+  created_at_github?: Date | string | null;
+  updated_at_github?: Date | string | null;
+  url?: string | null;
+}
+
 export const answerProjectQuestion = async (
   owner: string,
   repo: string,
@@ -108,7 +143,7 @@ export const answerProjectQuestion = async (
   );
 
   const readmeDocument = documentsResult.rows.find(
-    (document) =>
+    (document: DocumentRow) =>
       typeof document.content === "string" &&
       document.content.trim().length > 0
   );
@@ -246,7 +281,7 @@ export const answerProjectQuestion = async (
     const latestCommits = commitsResult.rows
       .slice(0, 5)
       .map(
-        (commit) =>
+        (commit: CommitRow) =>
           `Commit: ${commit.message} by ${
             commit.author ?? "Unknown"
           }`
@@ -255,7 +290,7 @@ export const answerProjectQuestion = async (
     const recentIssues = issuesResult.rows
       .slice(0, 5)
       .map(
-        (issue) =>
+        (issue: IssueRow) =>
           `Issue #${issue.issue_number}: ${issue.title} (${issue.state})`
       );
 
@@ -263,7 +298,7 @@ export const answerProjectQuestion = async (
       pullRequestsResult.rows
         .slice(0, 5)
         .map(
-          (pullRequest) =>
+          (pullRequest: PullRequestRow) =>
             `PR #${pullRequest.pr_number}: ${pullRequest.title} (${pullRequest.state})`
         );
 
@@ -292,12 +327,12 @@ export const answerProjectQuestion = async (
     normalizedQuestion.includes("issues")
   ) {
     const openIssues = issuesResult.rows.filter(
-      (issue) =>
+      (issue: IssueRow) =>
         String(issue.state).toLowerCase() === "open"
     ).length;
 
     const closedIssues = issuesResult.rows.filter(
-      (issue) =>
+      (issue: IssueRow) =>
         String(issue.state).toLowerCase() === "closed"
     ).length;
 
@@ -323,14 +358,14 @@ export const answerProjectQuestion = async (
   ) {
     const openPullRequests =
       pullRequestsResult.rows.filter(
-        (pullRequest) =>
+        (pullRequest: PullRequestRow) =>
           String(pullRequest.state).toLowerCase() ===
           "open"
       ).length;
 
     const closedPullRequests =
       pullRequestsResult.rows.filter(
-        (pullRequest) =>
+        (pullRequest: PullRequestRow) =>
           String(pullRequest.state).toLowerCase() ===
           "closed"
       ).length;

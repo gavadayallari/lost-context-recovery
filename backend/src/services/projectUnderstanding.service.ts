@@ -1,5 +1,34 @@
 import { pool } from "../config/database";
 
+interface CommitRow {
+  message: string;
+  author: string | null;
+  commit_date: Date | string | null;
+  url?: string | null;
+}
+
+interface IssueRow {
+  issue_number: number;
+  title: string;
+  body?: string | null;
+  state: string;
+  author: string | null;
+  created_at_github?: Date | string | null;
+  updated_at_github?: Date | string | null;
+  url?: string | null;
+}
+
+interface PullRequestRow {
+  pr_number: number;
+  title: string;
+  body?: string | null;
+  state: string;
+  author: string | null;
+  created_at_github?: Date | string | null;
+  updated_at_github?: Date | string | null;
+  url?: string | null;
+}
+
 export const getProjectUnderstanding = async (
   owner: string,
   repo: string
@@ -89,7 +118,7 @@ export const getProjectUnderstanding = async (
     documentsResult.rows[0]?.content ?? "";
 
   const commitMessages = commitsResult.rows
-    .map((commit) => commit.message)
+    .map((commit: CommitRow) => commit.message)
     .join(" ");
 
   const understanding = {
@@ -107,7 +136,7 @@ export const getProjectUnderstanding = async (
     features: extractFeatures(readmeContent),
 
     developmentHistory: commitsResult.rows.map(
-      (commit) => ({
+      (commit: CommitRow) => ({
         message: commit.message,
         author: commit.author,
         date: commit.commit_date,
@@ -117,21 +146,21 @@ export const getProjectUnderstanding = async (
     issueSummary: {
       total: issuesResult.rows.length,
       open: issuesResult.rows.filter(
-        (issue) => issue.state === "open"
+        (issue: IssueRow) => issue.state === "open"
       ).length,
       closed: issuesResult.rows.filter(
-        (issue) => issue.state === "closed"
+        (issue: IssueRow) => issue.state === "closed"
       ).length,
     },
 
     pullRequestSummary: {
       total: pullRequestsResult.rows.length,
       open: pullRequestsResult.rows.filter(
-        (pullRequest) =>
+        (pullRequest: PullRequestRow) =>
           pullRequest.state === "open"
       ).length,
       closed: pullRequestsResult.rows.filter(
-        (pullRequest) =>
+        (pullRequest: PullRequestRow) =>
           pullRequest.state === "closed"
       ).length,
     },

@@ -1,4 +1,4 @@
-import express from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 
@@ -42,7 +42,7 @@ app.use("/api/project-assistant", projectAssistantRoutes);
 app.use("/api/sync-history", syncHistoryRoutes);
 app.use("/api/repository-list", repositoryListRoutes);
 
-app.get("/", (_req, res) => {
+app.get("/", (_req: Request, res: Response) => {
   res.json({
     success: true,
     message: "Lost Context Recovery API is running",

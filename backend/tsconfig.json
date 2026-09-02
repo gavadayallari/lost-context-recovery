@@ -13,7 +13,8 @@
     "sourceMap": true,
 
     "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true
+    "exactOptionalPropertyTypes": true,
+    "types": ["node", "express", "cors", "pg"]
   },
   "include": ["src"]
 }
