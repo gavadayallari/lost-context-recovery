@@ -18,6 +18,9 @@ export const pool = new Pool(
       }
 );
 
+import fs from "fs";
+import path from "path";
+
 export const testDatabaseConnection = async () => {
   try {
     const result = await pool.query("SELECT NOW()");
@@ -26,6 +29,17 @@ export const testDatabaseConnection = async () => {
       "PostgreSQL connected:",
       result.rows[0]
     );
+
+    // Ensure database schema exists
+    try {
+      const schemaPath = path.join(process.cwd(), "schema.sql");
+      const schema = fs.readFileSync(schemaPath, "utf-8");
+      await pool.query(schema);
+      console.log("Database schema applied successfully.");
+    } catch (schemaError) {
+      console.error("Failed to apply database schema:", schemaError);
+    }
+
   } catch (error) {
     console.error(
       "PostgreSQL connection failed:",

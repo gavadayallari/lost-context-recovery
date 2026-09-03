@@ -42,12 +42,19 @@ export const getSyncHistoryController = async (
       error
     );
 
+    const errorMessage = error instanceof Error ? error.message : "Failed to fetch sync history";
+
+    if (errorMessage.includes("Repository not found")) {
+      res.status(404).json({
+        success: false,
+        message: errorMessage,
+      });
+      return;
+    }
+
     res.status(500).json({
       success: false,
-      message:
-        error instanceof Error
-          ? error.message
-          : "Failed to fetch sync history",
+      message: errorMessage,
     });
   }
 };
