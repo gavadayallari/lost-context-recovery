@@ -27,9 +27,18 @@ const app = express();
 app.use(
   cors({
     origin: function (origin, callback) {
-      // By reflecting the origin, we allow any frontend URL (like Vercel preview environments)
-      // to access the API without strict CORS errors, while still supporting credentials: true.
-      callback(null, origin || true);
+      const allowedOrigins = [
+        process.env.FRONTEND_URL,
+        "http://localhost:5173",
+        "http://localhost:5174",
+      ];
+      
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        // Fallback for Vercel preview URLs if needed, but stricter
+        callback(null, origin);
+      }
     },
     credentials: true,
   })
