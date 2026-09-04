@@ -92,7 +92,13 @@ const AskProject = () => {
         <div className="text-center mb-10">
           <h1 className="text-4xl font-bold">Project Intelligence</h1>
           <p className="mt-3 text-slate-400">Ask anything about this repository.</p>
-          <p className="mt-2 text-xs text-slate-500">Repository: {owner}/{repo}</p>
+          <div className="mt-4 flex items-center justify-center gap-4">
+            <span className="text-xs text-slate-500">Repository: {owner}/{repo}</span>
+            <span className="flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-3 py-1 text-xs font-medium text-blue-400">
+              <span className="h-2 w-2 rounded-full bg-blue-500 animate-pulse"></span>
+              Analyzing full repository codebase
+            </span>
+          </div>
         </div>
 
         <div className="flex-1 flex flex-col">

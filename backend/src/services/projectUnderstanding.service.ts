@@ -106,7 +106,9 @@ export const getProjectUnderstanding = async (
     `
     SELECT
       name,
-      content
+      content,
+      path,
+      file_type
     FROM documents
     WHERE repository_id = $1::UUID
     ORDER BY path;
@@ -114,8 +116,21 @@ export const getProjectUnderstanding = async (
     [repositoryId]
   );
 
-  const readmeContent =
-    documentsResult.rows[0]?.content ?? "";
+  const summaryResult = await pool.query(
+    `
+    SELECT summary, structure
+    FROM repository_summaries
+    WHERE repository_id = $1::UUID
+    LIMIT 1;
+    `,
+    [repositoryId]
+  );
+
+  const readmeDoc = documentsResult.rows.find((d: any) => d.name.toLowerCase().includes("readme"));
+  const readmeContent = readmeDoc?.content ?? "";
+  
+  const codebaseSummary = summaryResult.rows[0]?.summary ?? null;
+  const codebaseStructure = summaryResult.rows[0]?.structure ?? null;
 
   const commitMessages = commitsResult.rows
     .map((commit: CommitRow) => commit.message)
@@ -169,6 +184,9 @@ export const getProjectUnderstanding = async (
       commitMessages || "No commit activity found.",
 
     readmeAvailable: Boolean(readmeContent),
+    
+    codebaseSummary,
+    codebaseStructure,
   };
 
   return understanding;

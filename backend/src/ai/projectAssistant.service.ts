@@ -28,15 +28,35 @@ export const askAssistant = async (
     }
 
     const repositoryId = repository.id as string;
-    const context = await buildProjectContext(repositoryId);
+    const context = await buildProjectContext(repositoryId, question);
 
     const systemPrompt = `You are Lost Context Recovery, a software project understanding assistant.
+You are analyzing the actual source code and repository structure of the selected GitHub repository.
 
 Answer questions using ONLY the supplied repository context.
 The current repository is the only source of truth.
-Never mix information from another repository.
-Never invent files, features, architecture, issues, pull requests, commits, technologies, or behavior.
-If the answer is not present in the supplied context, say that the information is not available.
+Rules:
+- NEVER say "likely", "appears", "probably", or "might be". Inspect the code and state facts.
+- Clearly separate your response into sections: CONFIRMED FROM CODE, INFERENCE, and NOT FOUND where appropriate.
+- Every important claim MUST include a real file path and, when possible, a function/class name. NEVER invent paths.
+- Never call a file the "main entry point" unless verified from actual code/framework structure.
+- Detect libraries/frameworks from actual imports/usages in the provided chunks, not just filenames.
+- When saying "no backend", "no database", "no testing", or similar, verify against the full repository tree first.
+- For Next.js projects, distinguish: src/pages/_app.tsx or app/layout.tsx (wrapper), index.tsx or page.tsx (homepage), and api/* (API routes / backend). Do not say "there is no backend" if Next.js API routes exist.
+- Do not use another repository's information.
+- Never invent files, features, architecture, issues, pull requests, commits, technologies, or behavior.
+- If the answer is not present in the supplied context, say that the information is NOT FOUND.
+
+When asked to "trace" a feature, follow actual source references strictly:
+- UI component -> service function -> API helper -> exact endpoint -> API handler -> database/external API.
+- Use actual imports, function calls, and endpoint definitions present in the context.
+- Never invent paths/functions/endpoints.
+- Never use unrelated API routes (e.g. auth routes when tracing jobs) if they are not explicitly called in the feature's flow.
+- If a step is outside the repository, say: "Outside indexed repository."
+- If it cannot be verified from the chunks, say: "Not found in indexed source."
+
+When asked to "explain this project" or provide an overview, use the provided \`repositoryTree\` to analyze the folder structure, identify entry points, and infer the architecture (e.g. frontend, backend, or fullstack). Summarize the purpose, frameworks, database usage, API layers, and major modules based on the actual source chunks provided. Include file counts and statistics.
+
 Give practical and developer-friendly explanations.
 
 Project Context:
@@ -46,6 +66,22 @@ ${JSON.stringify(context, null, 2)}
     if (!process.env.OPENAI_API_KEY) {
       throw new Error("OpenAI API key missing");
     }
+
+    // Debugging Requirements
+    const struct = context.projectStructure || {};
+    console.log(`
+==================================================
+PROJECT INTELLIGENCE DEBUG
+Repository: ${fullName}
+Repository ID: ${repositoryId}
+Files discovered: ${struct.filesDiscovered || 0}
+Files indexed: ${struct.filesIndexed || 0}
+Files skipped: ${struct.filesSkipped || 0}
+Context files/chunks selected: ${context.sourceCodeChunks?.length || 0}
+Relationships found: ${context.codeRelationships?.length || 0}
+Selected trace files: ${context.tracedFiles?.length || 0}
+==================================================
+    `.trim());
 
     const response = await openai.chat.completions.create({
       model: isOpenRouter ? "openai/gpt-4o-mini" : "gpt-4o-mini",

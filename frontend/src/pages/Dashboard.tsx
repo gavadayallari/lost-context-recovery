@@ -74,6 +74,19 @@ type ProjectUnderstanding = {
 
   recentActivity: string;
   readmeAvailable: boolean;
+  codebaseSummary?: string;
+  codebaseStructure?: {
+    projectType: string;
+    languages: string[];
+    frameworks: string[];
+    entryPoints: string[];
+    frontend: boolean;
+    backend: boolean;
+    database: boolean;
+    testing: boolean;
+    docker: boolean;
+    totalFiles: number;
+  };
 };
 
 const Dashboard = () => {
@@ -475,6 +488,54 @@ const Dashboard = () => {
                 </p>
               </div>
             </div>
+            
+            {understanding.codebaseSummary && (
+              <div className="mt-8 rounded-xl border border-slate-700 bg-slate-900/50 p-6">
+                <h3 className="text-lg font-semibold text-blue-400">Codebase Summary</h3>
+                <p className="mt-3 text-slate-300 whitespace-pre-wrap leading-7">
+                  {understanding.codebaseSummary}
+                </p>
+              </div>
+            )}
+            
+            {understanding.codebaseStructure && (
+              <div className="mt-8">
+                <h3 className="text-lg font-semibold">Project Architecture</h3>
+                <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  <div className="rounded-lg border border-slate-800 bg-slate-950 p-4">
+                    <span className="text-xs text-slate-500 block">Project Type</span>
+                    <span className="font-medium">{understanding.codebaseStructure.projectType}</span>
+                  </div>
+                  <div className="rounded-lg border border-slate-800 bg-slate-950 p-4">
+                    <span className="text-xs text-slate-500 block">Languages</span>
+                    <span className="font-medium">{understanding.codebaseStructure.languages.join(", ") || "None"}</span>
+                  </div>
+                  <div className="rounded-lg border border-slate-800 bg-slate-950 p-4">
+                    <span className="text-xs text-slate-500 block">Frameworks</span>
+                    <span className="font-medium">{understanding.codebaseStructure.frameworks.join(", ") || "None"}</span>
+                  </div>
+                  <div className="rounded-lg border border-slate-800 bg-slate-950 p-4">
+                    <span className="text-xs text-slate-500 block">Source Files Indexed</span>
+                    <span className="font-medium">{understanding.codebaseStructure.totalFiles}</span>
+                  </div>
+                  <div className="rounded-lg border border-slate-800 bg-slate-950 p-4">
+                    <span className="text-xs text-slate-500 block">Components</span>
+                    <div className="flex gap-2 mt-1">
+                      {understanding.codebaseStructure.frontend && <span className="bg-blue-900 text-blue-200 text-xs px-2 py-1 rounded">Frontend</span>}
+                      {understanding.codebaseStructure.backend && <span className="bg-green-900 text-green-200 text-xs px-2 py-1 rounded">Backend</span>}
+                      {understanding.codebaseStructure.database && <span className="bg-purple-900 text-purple-200 text-xs px-2 py-1 rounded">Database</span>}
+                    </div>
+                  </div>
+                  <div className="rounded-lg border border-slate-800 bg-slate-950 p-4">
+                    <span className="text-xs text-slate-500 block">Infrastructure</span>
+                    <div className="flex gap-2 mt-1">
+                      {understanding.codebaseStructure.docker && <span className="bg-cyan-900 text-cyan-200 text-xs px-2 py-1 rounded">Docker</span>}
+                      {understanding.codebaseStructure.testing && <span className="bg-orange-900 text-orange-200 text-xs px-2 py-1 rounded">Tests</span>}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Key Features */}
             <div className="mt-8">

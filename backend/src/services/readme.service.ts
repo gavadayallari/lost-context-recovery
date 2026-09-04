@@ -40,7 +40,7 @@ export const processReadme = async (
         ? error.message
         : "";
 
-    if (message.includes("Not Found")) {
+    if (message.includes("Not Found") || message.includes("Private repository access is not available")) {
       console.warn(
         `README not found for ${fullName}. Continuing sync.`
       );

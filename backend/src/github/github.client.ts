@@ -12,14 +12,20 @@ const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
 });
 
+import { handleGitHubError } from "./github.utils";
+
 export const getRepository = async (
   owner: string,
   repo: string
 ) => {
-  const response = await octokit.rest.repos.get({
-    owner,
-    repo,
-  });
+  try {
+    const response = await octokit.rest.repos.get({
+      owner,
+      repo,
+    });
 
-  return response.data;
+    return response.data;
+  } catch (error) {
+    throw handleGitHubError(error);
+  }
 };

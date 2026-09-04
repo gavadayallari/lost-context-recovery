@@ -62,9 +62,28 @@ CREATE TABLE IF NOT EXISTS documents (
   path TEXT NOT NULL,
   content TEXT NOT NULL,
   url TEXT NOT NULL,
+  file_type VARCHAR(50),
+  language VARCHAR(50),
+  size INTEGER,
+  sha VARCHAR(255),
   created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
   UNIQUE(repository_id, path)
+);
+
+-- Backward-compatible alterations for existing instances
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS file_type VARCHAR(50);
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS language VARCHAR(50);
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS size INTEGER;
+ALTER TABLE documents ADD COLUMN IF NOT EXISTS sha VARCHAR(255);
+
+CREATE TABLE IF NOT EXISTS repository_summaries (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  repository_id UUID NOT NULL REFERENCES repositories(id) UNIQUE,
+  summary TEXT NOT NULL,
+  structure JSONB,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS sync_jobs (

@@ -29,3 +29,16 @@ export const parseGitHubUrl = (repoUrl: string) => {
     throw new Error("Invalid GitHub repository URL");
   }
 };
+
+export const handleGitHubError = (error: any) => {
+  if (error?.status === 401) {
+    throw new Error("Invalid or expired GitHub token");
+  }
+  if (error?.status === 403) {
+    throw new Error("Insufficient permission or rate limit exceeded for GitHub API");
+  }
+  if (error?.status === 404) {
+    throw new Error("Private repository access is not available. Check GitHub token permissions.");
+  }
+  throw error;
+};

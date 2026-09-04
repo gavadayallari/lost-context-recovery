@@ -7,15 +7,21 @@ const octokit = new Octokit({
   auth: process.env.GITHUB_TOKEN,
 });
 
+import { handleGitHubError } from "./github.utils";
+
 export const getCommits = async (
   owner: string,
   repo: string
 ) => {
-  const response = await octokit.rest.repos.listCommits({
-    owner,
-    repo,
-    per_page: 20,
-  });
+  try {
+    const response = await octokit.rest.repos.listCommits({
+      owner,
+      repo,
+      per_page: 20,
+    });
 
-  return response.data;
+    return response.data;
+  } catch (error) {
+    throw handleGitHubError(error);
+  }
 };
