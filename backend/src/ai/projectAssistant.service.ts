@@ -78,8 +78,8 @@ Files discovered: ${struct.filesDiscovered || 0}
 Files indexed: ${struct.filesIndexed || 0}
 Files skipped: ${struct.filesSkipped || 0}
 Context files/chunks selected: ${context.sourceCodeChunks?.length || 0}
-Relationships found: ${context.codeRelationships?.length || 0}
-Selected trace files: ${context.tracedFiles?.length || 0}
+Relationships found: ${(context as any).codeRelationships?.length || 0}
+Selected trace files: ${(context as any).tracedFiles?.length || 0}
 ==================================================
     `.trim());
 
