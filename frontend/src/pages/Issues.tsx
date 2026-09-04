@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getRepositoryIssues } from "../services/issueApi";
+import { DashboardLayout } from "../components/dashboard/DashboardLayout";
 
 type Issue = {
   id: string;
@@ -68,15 +69,7 @@ const Issues = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white p-6 md:p-10">
-      <div className="mb-6">
-        <Link
-          to={`/dashboard/${owner}/${repo}`}
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-300 transition hover:border-blue-500 hover:bg-slate-800 hover:text-white"
-        >
-          ← Back to Dashboard
-        </Link>
-      </div>
+    <DashboardLayout>
       <div className="max-w-5xl mx-auto">
         <p className="text-sm text-slate-400">
           Project Problems & Discussions
@@ -119,11 +112,10 @@ const Issues = () => {
                         </span>
 
                         <span
-                          className={`rounded-full px-3 py-1 text-xs font-medium ${
-                            issue.state === "open"
+                          className={`rounded-full px-3 py-1 text-xs font-medium ${issue.state === "open"
                               ? "bg-green-500/10 text-green-400"
                               : "bg-slate-800 text-slate-400"
-                          }`}
+                            }`}
                         >
                           {issue.state}
                         </span>
@@ -159,8 +151,8 @@ const Issues = () => {
                       Created:{" "}
                       {issue.created_at_github
                         ? new Date(
-                            issue.created_at_github
-                          ).toLocaleString()
+                          issue.created_at_github
+                        ).toLocaleString()
                         : "Unknown"}
                     </span>
 
@@ -168,8 +160,8 @@ const Issues = () => {
                       Updated:{" "}
                       {issue.updated_at_github
                         ? new Date(
-                            issue.updated_at_github
-                          ).toLocaleString()
+                          issue.updated_at_github
+                        ).toLocaleString()
                         : "Unknown"}
                     </span>
                   </div>
@@ -179,7 +171,7 @@ const Issues = () => {
           )}
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 

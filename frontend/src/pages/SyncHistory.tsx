@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 import { getSyncHistory } from "../services/syncHistoryApi";
+import { DashboardLayout } from "../components/dashboard/DashboardLayout";
 
 type SyncJob = {
   id: string;
@@ -79,15 +80,7 @@ const SyncHistory = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white p-6 md:p-10">
-      <div className="mb-6">
-        <Link
-          to={`/dashboard/${owner}/${repo}`}
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-300 transition hover:border-blue-500 hover:bg-slate-800 hover:text-white"
-        >
-          ← Back to Dashboard
-        </Link>
-      </div>
+    <DashboardLayout>
       <div className="max-w-5xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
@@ -233,7 +226,7 @@ const SyncHistory = () => {
           )}
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 

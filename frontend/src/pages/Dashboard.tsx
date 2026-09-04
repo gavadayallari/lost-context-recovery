@@ -7,6 +7,7 @@ import {
 import { getProjectOverview } from "../services/overviewApi";
 import { getProjectUnderstanding } from "../services/projectUnderstandingApi";
 import { getRepositoryCommits } from "../services/commitApi";
+import { DashboardLayout } from "../components/dashboard/DashboardLayout";
 import RepositorySwitcher from "../components/repository/RepositorySwitcher";
 
 import { CommitActivityChart } from "../components/charts/CommitActivityChart";
@@ -197,81 +198,8 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white flex">
-      {/* Sidebar */}
-      <aside className="hidden w-64 border-r border-slate-800 bg-slate-900 p-6 md:block">
-        <div className="mb-8">
-          <h1 className="text-xl font-bold">
-            Lost Context
-          </h1>
-
-          <p className="mt-1 text-sm text-slate-400">
-            Project Recovery System
-          </p>
-        </div>
-
-        <nav className="space-y-2">
-          <Link
-            to={`/dashboard/${owner}/${repo}`}
-            className="block w-full rounded-lg bg-slate-800 px-4 py-3 text-white"
-          >
-            Overview
-          </Link>
-
-          <Link
-            to={`/dashboard/${owner}/${repo}/timeline`}
-            className="block w-full rounded-lg px-4 py-3 text-slate-400 transition hover:bg-slate-800 hover:text-white"
-          >
-            Timeline
-          </Link>
-
-          <Link
-            to={`/dashboard/${owner}/${repo}/commits`}
-            className="block w-full rounded-lg px-4 py-3 text-slate-400 transition hover:bg-slate-800 hover:text-white"
-          >
-            Commits
-          </Link>
-
-          <Link
-            to={`/dashboard/${owner}/${repo}/issues`}
-            className="block w-full rounded-lg px-4 py-3 text-slate-400 transition hover:bg-slate-800 hover:text-white"
-          >
-            Issues
-          </Link>
-
-          <Link
-            to={`/dashboard/${owner}/${repo}/pull-requests`}
-            className="block w-full rounded-lg px-4 py-3 text-slate-400 transition hover:bg-slate-800 hover:text-white"
-          >
-            Pull Requests
-          </Link>
-
-          <Link
-            to={`/dashboard/${owner}/${repo}/readme`}
-            className="block w-full rounded-lg px-4 py-3 text-slate-400 transition hover:bg-slate-800 hover:text-white"
-          >
-            README
-          </Link>
-
-          <Link
-            to={`/dashboard/${owner}/${repo}/ask`}
-            className="block w-full rounded-lg px-4 py-3 text-slate-400 transition hover:bg-slate-800 hover:text-white"
-          >
-            Ask Project
-          </Link>
-
-          <Link
-            to={`/dashboard/${owner}/${repo}/sync-history`}
-            className="block w-full rounded-lg px-4 py-3 text-slate-400 transition hover:bg-slate-800 hover:text-white"
-          >
-            Sync History
-          </Link>
-        </nav>
-      </aside>
-
-      {/* Main */}
-      <main className="flex-1 p-6 md:p-10">
-        {/* Header */}
+    <DashboardLayout>
+      {/* Header */}
         <div className="mb-8">
           <div className="flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
@@ -665,8 +593,7 @@ const Dashboard = () => {
             </div>
           </section>
         )}
-      </main>
-    </div>
+    </DashboardLayout>
   );
 };
 

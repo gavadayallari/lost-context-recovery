@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getRepositoryReadme } from "../services/readmeApi";
+import { DashboardLayout } from "../components/dashboard/DashboardLayout";
 
 type ReadmeDocument = {
   id: string;
@@ -69,31 +70,26 @@ const Readme = () => {
 
   if (!readme) {
     return (
-      <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center p-6">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold">
-            README not available
-          </h1>
-
-          <p className="mt-3 text-slate-400">
-            {owner}/{repo} does not contain a README file.
-          </p>
+      <DashboardLayout>
+        <div className="mx-auto max-w-4xl">
+          <div className="flex items-center justify-center py-20">
+            <div className="text-center rounded-2xl border border-slate-800 bg-slate-900/50 p-10">
+              <h1 className="text-2xl font-bold text-white">
+                README not available
+              </h1>
+              <p className="mt-3 text-slate-400">
+                {owner}/{repo} does not contain a README file.
+              </p>
+            </div>
+          </div>
         </div>
-      </div>
+      </DashboardLayout>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white p-6 md:p-10">
-      <div className="mb-6">
-        <Link
-          to={`/dashboard/${owner}/${repo}`}
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-300 transition hover:border-blue-500 hover:bg-slate-800 hover:text-white"
-        >
-          ← Back to Dashboard
-        </Link>
-      </div>
-      <div className="mx-auto max-w-5xl">
+    <DashboardLayout>
+      <div className="mx-auto max-w-4xl">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <p className="text-sm text-slate-400">
@@ -125,7 +121,7 @@ const Readme = () => {
           </pre>
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 

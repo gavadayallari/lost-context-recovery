@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { askProjectAssistant } from "../services/projectAssistantApi";
+import { DashboardLayout } from "../components/dashboard/DashboardLayout";
 
 type ChatMessage = {
   role: "user" | "ai";
@@ -78,17 +79,8 @@ const AskProject = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white p-6 md:p-10">
-      <div className="mb-6">
-        <Link
-          to={`/dashboard/${owner}/${repo}`}
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-300 transition hover:border-blue-500 hover:bg-slate-800 hover:text-white"
-        >
-          ← Back to Dashboard
-        </Link>
-      </div>
-
-      <div className="mx-auto max-w-5xl">
+    <DashboardLayout>
+      <div className="mx-auto flex h-full max-w-4xl flex-col pb-8">
         <div className="text-center mb-10">
           <h1 className="text-4xl font-bold">Project Intelligence</h1>
           <p className="mt-3 text-slate-400">Ask anything about this repository.</p>
@@ -189,7 +181,7 @@ const AskProject = () => {
           )}
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 

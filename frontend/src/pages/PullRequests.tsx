@@ -3,6 +3,7 @@ import {
   getRepositoryPullRequests,
 } from "../services/pullRequestApi";
 import { useParams, Link } from "react-router-dom";
+import { DashboardLayout } from "../components/dashboard/DashboardLayout";
 
 type PullRequest = {
   id: string;
@@ -77,15 +78,7 @@ const PullRequests = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-white p-6 md:p-10">
-      <div className="mb-6">
-        <Link
-          to={`/dashboard/${owner}/${repo}`}
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-300 transition hover:border-blue-500 hover:bg-slate-800 hover:text-white"
-        >
-          ← Back to Dashboard
-        </Link>
-      </div>
+    <DashboardLayout>
       <div className="max-w-5xl mx-auto">
         <p className="text-sm text-slate-400">
           Code Review History
@@ -193,7 +186,7 @@ const PullRequests = () => {
           )}
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 

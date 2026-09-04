@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getProjectTimeline } from "../services/timelineApi";
+import { DashboardLayout } from "../components/dashboard/DashboardLayout";
 
 type TimelineItem = {
   event_type: "commit" | "issue" | "pull_request";
@@ -75,15 +76,7 @@ const Timeline = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 p-6 text-white md:p-10">
-      <div className="mb-6">
-        <Link
-          to={`/dashboard/${owner}/${repo}`}
-          className="inline-flex items-center gap-2 rounded-lg border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-300 transition hover:border-blue-500 hover:bg-slate-800 hover:text-white"
-        >
-          ← Back to Dashboard
-        </Link>
-      </div>
+    <DashboardLayout>
       <div className="mx-auto max-w-4xl">
         <p className="text-sm text-slate-400">
           Project Timeline
@@ -180,7 +173,7 @@ const Timeline = () => {
           )}
         </div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 
